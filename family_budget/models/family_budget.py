@@ -52,6 +52,29 @@ class FamillyBudget(models.Model):
             rec.total_expenses = sum(rec.expense_line_ids.mapped('amount'))
             rec.balanced = rec.total_incomes == rec.total_expenses
 
+    def _group_lines_by_section(self, lines):
+        """Group ordered budget lines by section.
+
+        Returns a list of dicts: {'name': <section title or False>,
+        'lines': <recordset of real lines>, 'subtotal': <sum of amounts>}.
+        Lines appearing before the first section are grouped under a
+        section with no name.
+        """
+        self.ensure_one()
+        groups = []
+        current = {'name': False, 'lines': self.env['familly.budget.line'], 'subtotal': 0.0}
+        for line in lines.sorted(key=lambda l: (l.sequence, l.id)):
+            if line.display_type == 'line_section':
+                if current['lines'] or current['name']:
+                    groups.append(current)
+                current = {'name': line.name, 'lines': self.env['familly.budget.line'], 'subtotal': 0.0}
+            else:
+                current['lines'] |= line
+                current['subtotal'] += line.amount
+        if current['lines'] or current['name']:
+            groups.append(current)
+        return groups
+
     def action_confirm(self):
         for budget in self:
             if not budget.balanced:

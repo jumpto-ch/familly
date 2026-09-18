@@ -77,30 +77,46 @@
 
                     <notebook>
                         <page string="incomes">
-                            <field name="income_line_ids">
+                            <field name="income_line_ids" widget="section_and_note_one2many">
                                 <tree editable="bottom" default_order="sequence, id">
+                                        <control>
+                                            <create name="add_line_control" string="Add a line"/>
+                                            <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                        </control>
+                                        <field name="display_type" column_invisible="True"/>
                                         <field name="company_id" column_invisible="True"/>
                                         <field name="type" column_invisible="True"/>
                                         <field name="currency_id" column_invisible="True"/>
                                         <field name="sequence" widget="handle"/>
-                                        <field name="account_id"  groups="account.group_account_readonly" options="{'no_quick_create': True}"/>
-                                        <field name="name" optional="show"/>
-                                        <field name="amount" string="Amount"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="account_id"  groups="account.group_account_readonly" options="{'no_quick_create': True}"
+                                               required="not display_type" readonly="display_type"/>
+                                        <field name="name" optional="show"
+                                               widget="section_and_note_text"/>
+                                        <field name="amount" string="Amount"  widget="monetary" options="{'currency_field': 'currency_id'}"
+                                               readonly="display_type"/>
                                         <field name="currency_id" column_invisible="True"/>
                                     </tree>
                             </field>
                         </page>
 
                         <page string="Expenses">
-                            <field name="expense_line_ids">
+                            <field name="expense_line_ids" widget="section_and_note_one2many">
                                 <tree editable="bottom" default_order="sequence, id">
+                                        <control>
+                                            <create name="add_line_control" string="Add a line"/>
+                                            <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                        </control>
+                                        <field name="display_type" column_invisible="True"/>
                                         <field name="company_id" column_invisible="True"/>
                                         <field name="type" column_invisible="True"/>
                                         <field name="currency_id" column_invisible="True"/>
                                         <field name="sequence" widget="handle"/>
-                                        <field name="account_id"  groups="account.group_account_readonly" options="{'no_quick_create': True}"/>
-                                        <field name="name" optional="show"/>
-                                        <field name="amount" string="Amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="account_id"  groups="account.group_account_readonly" options="{'no_quick_create': True}"
+                                               required="not display_type" readonly="display_type"/>
+                                        <field name="name" optional="show"
+                                               widget="section_and_note_text"/>
+                                        <field name="amount" string="Amount" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                               readonly="display_type"/>
                                         <field name="currency_id" column_invisible="True"/>
                                     </tree>
                             </field>
