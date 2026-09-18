@@ -75,25 +75,47 @@ class FamillyBudget(models.Model):
             groups.append(current)
         return groups
 
+    @api.constrains('date_start', 'date_end')
+    def _check_dates(self):
+        for budget in self:
+            if budget.date_start and budget.date_end and budget.date_start > budget.date_end:
+                raise ValidationError(_("The start date must be before the end date."))
+
+    def _periods_overlap(self, other):
+        """Return True if this budget's active period overlaps ``other``'s.
+
+        An empty end date means the period is open-ended (no upper bound).
+        """
+        self.ensure_one()
+        return (
+            (not other.date_end or self.date_start <= other.date_end)
+            and (not self.date_end or other.date_start <= self.date_end)
+        )
+
+    @api.constrains('state', 'date_start', 'date_end', 'company_id')
+    def _check_active_period_overlap(self):
+        for budget in self:
+            if budget.state != 'active':
+                continue
+            others = self.search([
+                ('id', '!=', budget.id),
+                ('state', '=', 'active'),
+                ('company_id', '=', budget.company_id.id),
+            ])
+            for other in others:
+                if budget._periods_overlap(other):
+                    raise ValidationError(_(
+                        "This budget's active period overlaps with another active "
+                        "budget: '%s'. Only one active budget is allowed for a given "
+                        "period.") % other.name)
+
     def action_confirm(self):
         for budget in self:
             if not budget.balanced:
                 raise ValidationError(_("Budget not balanced! Revenue must equal expenses."))
 
-            # Un seul budget actif par société
-            other_active = self.search(
-                [
-                    ("id", "!=", budget.id),
-                    ("state", "=", "active"),
-                    ("company_id", "=", budget.company_id.id),
-                ],
-                limit=1,
-            )
-            if other_active:
-                raise ValidationError(
-                        _("There is already an active budget for this company: '%s'. "
-                          "You must archive it before activating a new one.")% other_active.name
-                )
+            # La règle "un seul budget actif par période" est vérifiée par
+            # la contrainte _check_active_period_overlap lors du passage à l'état actif.
 
             # Initialiser la prochaine date d'exécution
             base_date = budget.date_start or fields.Date.today()

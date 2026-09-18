@@ -38,6 +38,11 @@
                             class="btn-primary"
                             invisible="state != 'draft'"/>
 
+                    <button name="action_set_draft"
+                            string="Set to Draft"
+                            type="object"
+                            invisible="state != 'active'"/>
+
                     <button name="%(action_report_familly_budget)d"
                             string="Print"
                             type="action"
