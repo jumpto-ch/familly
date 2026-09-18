@@ -32,6 +32,7 @@ Features:
         "security/ir.model.access.csv",
         "data/journal.xml",
         "data/budget_cron.xml",
+        "report/budget_report.xml",
         "views/budget_view.xml",
         "views/menu.xml",
     ],
