@@ -38,6 +38,11 @@
                             class="btn-primary"
                             invisible="state != 'draft'"/>
 
+                    <button name="%(action_report_familly_budget)d"
+                            string="Print"
+                            type="action"
+                            class="btn-secondary"/>
+
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>

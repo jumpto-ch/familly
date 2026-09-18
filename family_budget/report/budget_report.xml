@@ -1,0 +1,154 @@
+<odoo>
+    <!-- Report action -->
+    <record id="action_report_familly_budget" model="ir.actions.report">
+        <field name="name">Family Budget</field>
+        <field name="model">familly.budget</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">family_budget.report_familly_budget</field>
+        <field name="report_file">family_budget.report_familly_budget</field>
+        <field name="print_report_name">'Budget - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_familly_budget"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Report template -->
+    <template id="report_familly_budget">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+
+                        <h2>
+                            Budget familial : <span t-field="doc.name"/>
+                        </h2>
+
+                        <div class="row mt-2 mb-4">
+                            <div class="col-6">
+                                <strong>Version :</strong> <span t-field="doc.version"/><br/>
+                                <strong>Périodicité :</strong>
+                                <span t-field="doc.frequency"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Période :</strong>
+                                <span t-if="doc.date_start">
+                                    du <span t-field="doc.date_start"/>
+                                </span>
+                                <span t-if="doc.date_end">
+                                    au <span t-field="doc.date_end"/>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Revenus -->
+                        <h3>Revenus</h3>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Compte</th>
+                                    <th>Libellé</th>
+                                    <th class="text-end">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.income_line_ids" t-as="line">
+                                    <td><span t-field="line.account_id.display_name"/></td>
+                                    <td><span t-field="line.name"/></td>
+                                    <td class="text-end">
+                                        <span t-field="line.amount"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="not doc.income_line_ids">
+                                    <td colspan="3" class="text-muted">Aucun revenu.</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-end"><strong>Total des revenus</strong></td>
+                                    <td class="text-end">
+                                        <strong>
+                                            <span t-field="doc.total_incomes"
+                                                  t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- Dépenses -->
+                        <h3 class="mt-4">Dépenses</h3>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Compte</th>
+                                    <th>Libellé</th>
+                                    <th class="text-end">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.expense_line_ids" t-as="line">
+                                    <td><span t-field="line.account_id.display_name"/></td>
+                                    <td><span t-field="line.name"/></td>
+                                    <td class="text-end">
+                                        <span t-field="line.amount"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="not doc.expense_line_ids">
+                                    <td colspan="3" class="text-muted">Aucune dépense.</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-end"><strong>Total des dépenses</strong></td>
+                                    <td class="text-end">
+                                        <strong>
+                                            <span t-field="doc.total_expenses"
+                                                  t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- Résumé -->
+                        <div class="row mt-4">
+                            <div class="col-6 offset-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td class="text-end"><strong>Total des revenus</strong></td>
+                                        <td class="text-end">
+                                            <span t-field="doc.total_incomes"
+                                                  t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-end"><strong>Total des dépenses</strong></td>
+                                        <td class="text-end">
+                                            <span t-field="doc.total_expenses"
+                                                  t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-end"><strong>Solde</strong></td>
+                                        <td class="text-end">
+                                            <span t-esc="doc.total_incomes - doc.total_expenses"
+                                                  t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <p t-if="doc.balanced" class="text-success text-end">
+                                    ✔ Budget équilibré
+                                </p>
+                                <p t-if="not doc.balanced" class="text-danger text-end">
+                                    ⚠ Budget non équilibré
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
