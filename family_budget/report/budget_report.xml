@@ -74,17 +74,17 @@
                                     <td colspan="3" class="text-muted">Aucun revenu.</td>
                                 </tr>
                             </tbody>
-                            <tfoot>
+                            <tbody style="page-break-inside: avoid;">
                                 <tr>
-                                    <td colspan="2" class="text-end"><strong>Total des revenus</strong></td>
-                                    <td class="text-end">
+                                    <td colspan="2" class="text-end border-top border-dark"><strong>Total des revenus</strong></td>
+                                    <td class="text-end border-top border-dark">
                                         <strong>
                                             <span t-field="doc.total_incomes"
                                                   t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
                                         </strong>
                                     </td>
                                 </tr>
-                            </tfoot>
+                            </tbody>
                         </table>
 
                         <!-- Dépenses -->
@@ -121,17 +121,17 @@
                                     <td colspan="3" class="text-muted">Aucune dépense.</td>
                                 </tr>
                             </tbody>
-                            <tfoot>
+                            <tbody style="page-break-inside: avoid;">
                                 <tr>
-                                    <td colspan="2" class="text-end"><strong>Total des dépenses</strong></td>
-                                    <td class="text-end">
+                                    <td colspan="2" class="text-end border-top border-dark"><strong>Total des dépenses</strong></td>
+                                    <td class="text-end border-top border-dark">
                                         <strong>
                                             <span t-field="doc.total_expenses"
                                                   t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
                                         </strong>
                                     </td>
                                 </tr>
-                            </tfoot>
+                            </tbody>
                         </table>
 
                         <!-- Résumé -->
