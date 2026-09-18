@@ -19,6 +19,9 @@
                     <div class="page">
                         <div class="oe_structure"/>
 
+                        <t t-set="income_sections" t-value="doc._group_lines_by_section(doc.income_line_ids)"/>
+                        <t t-set="expense_sections" t-value="doc._group_lines_by_section(doc.expense_line_ids)"/>
+
                         <h2>
                             Budget familial : <span t-field="doc.name"/>
                         </h2>
@@ -50,7 +53,6 @@
                                     <th class="text-end">Montant</th>
                                 </tr>
                             </thead>
-                            <t t-set="income_sections" t-value="doc._group_lines_by_section(doc.income_line_ids)"/>
                             <tbody t-foreach="income_sections" t-as="section" style="page-break-inside: avoid;">
                                 <tr t-if="section['name']" class="table-active">
                                     <td colspan="3"><strong t-esc="section['name']"/></td>
@@ -97,7 +99,6 @@
                                     <th class="text-end">Montant</th>
                                 </tr>
                             </thead>
-                            <t t-set="expense_sections" t-value="doc._group_lines_by_section(doc.expense_line_ids)"/>
                             <tbody t-foreach="expense_sections" t-as="section" style="page-break-inside: avoid;">
                                 <tr t-if="section['name']" class="table-active">
                                     <td colspan="3"><strong t-esc="section['name']"/></td>
@@ -135,7 +136,45 @@
                         </table>
 
                         <!-- Résumé -->
-                        <div class="row mt-4">
+                        <h3 class="mt-4">Récapitulatif</h3>
+                        <t t-set="named_income_sections" t-value="[s for s in income_sections if s['name']]"/>
+                        <t t-set="named_expense_sections" t-value="[s for s in expense_sections if s['name']]"/>
+                        <div class="row" t-if="named_income_sections or named_expense_sections">
+                            <div class="col-6" t-if="named_income_sections">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr><th colspan="2">Sous-totaux des revenus</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="named_income_sections" t-as="section">
+                                            <td><span t-esc="section['name']"/></td>
+                                            <td class="text-end">
+                                                <span t-esc="section['subtotal']"
+                                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-6" t-if="named_expense_sections">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr><th colspan="2">Sous-totaux des dépenses</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="named_expense_sections" t-as="section">
+                                            <td><span t-esc="section['name']"/></td>
+                                            <td class="text-end">
+                                                <span t-esc="section['subtotal']"
+                                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
                             <div class="col-6 offset-6">
                                 <table class="table table-sm">
                                     <tr>
@@ -160,12 +199,6 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <p t-if="doc.balanced" class="text-success text-end">
-                                    ✔ Budget équilibré
-                                </p>
-                                <p t-if="not doc.balanced" class="text-danger text-end">
-                                    ⚠ Budget non équilibré
-                                </p>
                             </div>
                         </div>
                     </div>
