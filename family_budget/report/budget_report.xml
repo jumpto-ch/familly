@@ -137,20 +137,7 @@
 
                         <!-- Résumé -->
                         <t t-set="named_expense_sections" t-value="[s for s in expense_sections if s['name']]"/>
-                        <div class="row mt-4" t-if="named_expense_sections">
-                            <div class="col-6">
-                                <div class="text-muted fw-light">Sous-totaux des dépenses</div>
-                                <t t-foreach="named_expense_sections" t-as="section">
-                                    <div class="d-flex justify-content-between text-muted fw-light">
-                                        <span t-esc="section['name']"/>
-                                        <span t-esc="section['subtotal']"
-                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
-                                    </div>
-                                </t>
-                            </div>
-                        </div>
-
-                        <div class="row mt-2">
+                        <div class="row mt-4">
                             <div class="col-6 offset-6">
                                 <table class="table table-sm">
                                     <tr>
@@ -175,6 +162,19 @@
                                         </td>
                                     </tr>
                                 </table>
+                            </div>
+                        </div>
+
+                        <div class="row" t-if="named_expense_sections">
+                            <div class="col-6 offset-6">
+                                <div class="text-muted fw-light">Sous-totaux des dépenses</div>
+                                <t t-foreach="named_expense_sections" t-as="section">
+                                    <div class="d-flex justify-content-between text-muted fw-light">
+                                        <span t-esc="section['name']"/>
+                                        <span t-esc="section['subtotal']"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </div>
+                                </t>
                             </div>
                         </div>
                     </div>
