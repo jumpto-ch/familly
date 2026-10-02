@@ -21,22 +21,22 @@ class AccountBankStatementLine(models.Model):
                         val['payment_ref'] = match.group(1).strip()
 
             if 'partner_name' in val.keys() and 'partner_id' not in val.keys():
+                state_line_ref = (val.get('partner_name') or '').lower()
                 for partner in self.env['res.partner'].search([]):
                     #_logger.debug("partner id: %s", partner.id)
-                    statement_name = partner.statement_name.lower() if partner.statement_name else partner.name.lower()
-                    state_line_ref = val['partner_name'].lower()
+                    statement_name = (partner.statement_name or partner.name or '').lower()
 
-                    if isinstance(statement_name, str) and statement_name in state_line_ref:
+                    if statement_name and statement_name in state_line_ref:
                         val['partner_id'] = partner.id
                         break
 
             if 'partner_id' not in val.keys() and 'partner_name' not in val.keys():
+                state_line_ref = (val.get('payment_ref') or '').lower()
                 for partner in self.env['res.partner'].search([]):
                     #_logger.debug("partner id: %s", partner.id)
-                    state_line_ref = val['payment_ref'].lower()
-                    statement_name = partner.statement_name.lower() if partner.statement_name else partner.name.lower()
+                    statement_name = (partner.statement_name or partner.name or '').lower()
 
-                    if isinstance(statement_name, str) and statement_name in state_line_ref:
+                    if statement_name and statement_name in state_line_ref:
                         val['partner_id'] = partner.id
                         break
 
