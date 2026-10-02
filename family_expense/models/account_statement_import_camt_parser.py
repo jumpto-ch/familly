@@ -10,9 +10,10 @@ class AccountStatementImportCamtParser(models.AbstractModel):
 
         # Use custom statement_name to find partners in narration
         def _find_matching_partner(search_string):
+            search = (search_string or '').lower()
             for p in self.env['res.partner'].search([]):
-                criteria = p.statement_name.lower() if p.statement_name else p.name.lower()
-                if isinstance(criteria, str) and criteria in search_string.lower():
+                criteria = (p.statement_name or p.name or '').lower()
+                if criteria and criteria in search:
                     return p
             return None
 
